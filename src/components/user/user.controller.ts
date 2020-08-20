@@ -1,15 +1,17 @@
 import {
   Body,
-  Controller,
+  Controller, Inject,
   Post,
 } from '@nestjs/common';
 import { User } from './entity/user.entity';
-import { UserService } from './user.service';
+import { UserServiceInterface } from './interface/user.service.interface';
 
 @Controller('users')
 export class UserController {
 
-  constructor(private readonly userService: UserService) {}
+  constructor(@Inject('UserServiceInterface')
+              private readonly userService: UserServiceInterface) {
+  }
 
   @Post()
   public async create(@Body() userDto: any): Promise<User> {
