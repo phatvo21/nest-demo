@@ -19,7 +19,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration": "nest start --watch && ts-node ./node_modules/typeorm/cli.js migration:run"
+    "migration": "nest start --watch && ts-node ./node_modules/typeorm/cli.js migration:run",
+    "build:dev": "nest build && pm2 start pm2.yaml",
+    "build:prod": "nest build && NODE_PORT=3003 pm2 start pm2.yaml -n nest-demo --env production",
+    "pm2:delete": "pm2 delete nest-demo-app",
+    "build-docker:prod": "nest build && NODE_PORT=3009 pm2 start pm2.yaml -n nest-demo --no-daemon --env production",
+    "build-docker:dev": "nest build && NODE_PORT=3009 pm2 start pm2.yaml -n nest-demo --no-daemon --env development"
   },
   "dependencies": {
     "@nestjs/common": "^7.0.0",
@@ -32,6 +37,7 @@
     "class-validator": "^0.12.2",
     "dotenv": "^8.2.0",
     "mongodb": "^3.6.0",
+    "pm2": "^4.4.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4",

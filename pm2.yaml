@@ -1,0 +1,12 @@
+apps:
+  - script: ./dist/main.js
+    name: nest-demo-app
+    watch: true
+    instances: max
+    exec_mode: cluster
+    env:
+      PORT: ${SERVER_PORT}
+      NODE_ENV: development
+    env_production:
+      NODE_PORT: ${SERVER_PORT}
+      NODE_ENV: production

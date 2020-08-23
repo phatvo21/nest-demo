@@ -1,0 +1,100 @@
+# docker compose version
+version: '3.7'
+# all the containers have to declare inside services
+services:
+  # App service
+  demoapp:
+    # application rely on database running
+    depends_on:
+      - db
+    # this build context will take the commands from Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # image name
+    image: nest-demo-docker
+    # container name
+    container_name: demoapp
+    # always restart the container if it stops.
+    restart: always
+    # docker run -t is allow
+    tty: true
+    # application port, this is take value from env file
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    # working directory
+    working_dir: /var/www/nest-demo
+    # application environment
+    environment:
+      SERVICE_NAME: demoapp
+      SERVICE_TAGS: dev
+      SERVICE_DB_HOST: ${DATABASE_HOST}:27017
+      SERVICE_DB_USER: ${DATABASE_USERNAME}
+      SERVICE_DB_PASSWORD: ${DATABASE_PASSWORD}
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      VIRTUAL_PORT: ${VIRTUAL_PORT}
+    # save (persist) data and also to share data between containers
+    volumes:
+      - ./:/var/www/nest-demo
+      - /var/www/nest-demo/node_modules
+    # application network, each container for a service joins this network
+    networks:
+      - nest-demo-network
+
+  # Web server service
+  nginx-proxy:
+    # pull image from docker hub
+    image: jwilder/nginx-proxy:alpine
+    # container name
+    container_name: nginx-proxy
+    # always restart, except that when the container is stopped
+    restart: unless-stopped
+    # docker run -t is allow
+    tty: true
+    # web server port default 81 and ssl run in port 443
+    ports:
+      - "81:81"
+      - "443:443"
+    # save (persist) data and also to share data between containers
+    volumes:
+      - ./:/var/www/nest-demo
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    # web server rely on application running
+    depends_on:
+      - demoapp
+    # application network, each container for a service joins this network
+    networks:
+      - nest-demo-network
+  # Database service
+  db:
+    # pull image from docker hub
+    image: mongo
+    # container name
+    container_name: nestmongo
+    # always restart the container if it stops.
+    restart: always
+    # database credentials, this is take value from env file
+    environment:
+      MONGO_INITDB_ROOT_DATABASE: ${DATABASE_NAME}
+      MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    # save (persist) data and also to share data between containers
+    volumes:
+      - db_data:/data/db
+    # database port
+    ports:
+      - "${DATABASE_PORT}:${DATABASE_PORT}"
+    # application network, each container for a service joins this network
+    networks:
+      - nest-demo-network
+
+#Docker Networks
+networks:
+  nest-demo-network:
+    # nginx external network
+    external:
+      name: nginx-proxy
+    driver: bridge
+# save (persist) data
+volumes:
+  db_data: {}
