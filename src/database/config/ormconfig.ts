@@ -16,15 +16,9 @@ export function ormConfig(): any {
     extra: {
       connectionLimit: parseInt(process.env.DATABASE_CONNECTION_LIMIT),
     },
-    entities: [
-      'dist/**/entity/*.entity.js',
-    ],
-    migrations: [
-      'dist/database/migrations/*.js',
-    ],
-    subscribers: [
-      'dist/observers/subscribers/*.subscriber.js',
-    ],
+    entities: ['dist/**/entity/*.entity.js'],
+    migrations: ['dist/database/migrations/*.js'],
+    subscribers: ['dist/observers/subscribers/*.subscriber.js'],
     cli: {
       entitiesDir: 'src/components/**/entity',
       migrationsDir: 'src/database/migrations',
@@ -32,4 +26,3 @@ export function ormConfig(): any {
     },
   };
 }
-

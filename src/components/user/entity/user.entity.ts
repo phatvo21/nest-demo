@@ -1,33 +1,29 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity, ObjectIdColumn,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, ObjectIdColumn } from 'typeorm';
 import { hashSync, genSaltSync } from 'bcrypt';
 
-@Entity({name: 'users'})
+@Entity({ name: 'users' })
 export class User {
   @ObjectIdColumn()
   id: number;
 
   @Column({
     type: 'string',
-    unique: true
+    unique: true,
   })
   email: string;
 
   @Column({
-    type: 'string'
+    type: 'string',
   })
   password: string;
 
   @Column({
-    type: 'date'
+    type: 'date',
   })
   createdAt: any;
 
   @Column({
-    type: 'date'
+    type: 'date',
   })
   updatedAt: any;
 
